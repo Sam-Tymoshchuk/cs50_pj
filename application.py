@@ -1,5 +1,5 @@
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
@@ -40,34 +40,49 @@ def register():
 def login():
     """Log user in."""
 
-    # forget any user_id
     session.clear()
 
-    # if user reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
+    return render_template("login.html")
 
-        # ensure username was submitted
-        if not request.args.get("login"):
-            return "must provide username"
+@app.route("/verification", methods=["GET"])
+def ver():
+    login = request.args.get("login")
+    password = request.args.get("pass")
 
-        # ensure password was submitted
-        elif not request.args.get("pass"):
-            return "must provide password"
+    if not login or not password:
+        return jsonify(status="1")
 
-        # query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.args.get("username"))
+    rows =  db.execute("SELECT * FROM users WHERE login = :username", username=login)
 
-        # ensure username exists and password is correct
-        if len(rows) != 1 or not pwd_context.verify(request.args.get("pass"), rows[0]["hash"]):
-            return "invalid username and/or password"
+    if len(rows) != 1 or (password != rows[0]["pass"]):
+        return jsonify(status="1")
 
-        # remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+    session["user_id"] = rows[0]["id"]
 
-        # redirect user to home page
-        return jsonify(status="ok")
-    # else if user reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
+    print (session)
 
+    return render_template("index.html")
 
+@app.route("/tournaments")
+def tournaments():
+    return ""
+
+@app.route("/new_tourn")
+def new_tourn():
+    return ""
+
+@app.route("/games")
+def games():
+    return ""
+
+@app.route("/new_game")
+def new_game():
+    return ""
+
+@app.route("/new_player")
+def new_player():
+    return ""
+
+@app.route("/players")
+def players():
+    return ""

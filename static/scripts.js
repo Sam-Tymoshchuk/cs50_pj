@@ -1,16 +1,19 @@
-$(function() {
-    $("#q").bind("click", function() {
+$(document).ready(function() {
+    $("#q").click(function() {
 
         let param = {
-            login: "Sam",
-            pass: "123"
+            login: $("#login").val(),
+            pass: $("#inputPassword1").val()
         };
-        $.getJSON("/login", param, function(data, textStatus, jqXHR) {
+        $.getJSON("/verification", param, function(data, textStatus, jqXHR) {
+            if (data.status === "1"){
 
-            $("#p").replaceWith(
-                ""
-                );
+                $("#inputPassword1").addClass("is-invalid");
+                $("#p").append($("<div>")
+                .addClass("invalid-feedback")
+                .html("Invalid login or password"))
+            }
+
         });
-        return false;
     });
 });
