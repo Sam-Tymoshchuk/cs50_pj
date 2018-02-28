@@ -15,6 +15,7 @@
 
         <!-- http://jquery.com/ -->
         <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
         <!-- app's own JavaScript -->
         <script src="/static/scripts.js"></script>
@@ -51,6 +52,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('players') }}">All Players</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                                <li><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
                     </ul>
                 {% else %}
                     <ul class="navbar-nav mr-auto">
