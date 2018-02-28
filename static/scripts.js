@@ -40,6 +40,11 @@ $(document).ready(function($) {
             newDouble.on('dblclick', function() {
                 $(this).remove(); // Attach the event handler *before* adding the element
             });
+            $('<input>').attr({
+                type: 'hidden',
+                value: (p1+p2),
+                name: 'bar'
+            }).append('li');
             $('ol').append(newDouble); // To put the new task at the bottom of the list
             $("#p1").val("");
             $("#p2").val("");
