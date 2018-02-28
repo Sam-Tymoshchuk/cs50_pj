@@ -123,44 +123,79 @@ def home():
     return render_template("home.html")
 
 @app.route("/tournaments")
-#@login_required
+@login_required
 def tournaments():
 
+    tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
+    return render_template("tournaments.html", roster=tournament)
     try:
-        tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = id")
-
+        tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
         return render_template("tournaments.html", roster=tournament)
     except:
-        return "Exeption on dtb"
+        return "Exeption on dtb 1"
 
 @app.route("/new_tourn", methods=["GET", "POST"])
+@login_required
 def new_tourn():
     if request.method == "POST":
-        players = 0
+
+        players = request.form.getlist("pla")
+        players = [tuple(p.split(",")) for p in players]
+        date = request.form["date"]
+        max_players = request.form["max"]
+        location = request.form["location"]
+
+        print (players, date, max_players, location)
 
         try:
-            players = request.form.getlist("pla")
-            print (players[0])
+            t_id = db.execute("INSERT INTO tournaments (date, max_num, location_id, t_type_id) VALUES (:date, :max_num, 1, 1)",
+            date=date, max_num=max_players)
         except:
-            print (players)
+            print ("Error 1")
 
+        try:
+            for p in players:
+                db.execute("INSERT INTO participants (t_id, p1, p2) VALUES (:t_id, :p1, :p2)",
+                t_id=t_id, p1=p[0], p2=p[1])
+        except:
+            print ("error 2")
 
-        return jsonify(players)
+        return render_template("new_tourn.html")
     else:
         return render_template("new_tourn.html")
 
+@app.route("/tournament")
+@login_required
+def tournament():
+    t_id = request.args.get("t_id")
+    print (t_id)
+    tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
+    t_id=t_id)
+    return render_template("tournament.html", roster=tournament)
+
+    try:
+        tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
+        t_id=t_id)
+        return render_template("tournament.html", roster=tournament)
+    except:
+        return redirect("/tournaments")
+
 @app.route("/games")
 def games():
+    # YET TO DO
     return ""
 
 @app.route("/new_game")
 def new_game():
+    # YET TO DO
     return ""
 
 @app.route("/new_player")
 def new_player():
+    # YET TO DO
     return ""
 
 @app.route("/players")
 def players():
+    # YET TO DO
     return ""

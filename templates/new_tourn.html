@@ -8,7 +8,7 @@
     <!--<script src="/static/newTourn.js"></script>-->
 
     <form class="form-group" action="{{ url_for('new_tourn') }}" method="post">
-
+      <h2>Add a New Tournament</h1>
       <div class="form-group d-flex">
         <input type="text" class="form-control" placeholder="First Player" id="p1">
         <input type="text" class="form-control" placeholder="Second Player" id="p2">
@@ -19,7 +19,14 @@
 
       <div class="form-group d-flex">
         <input type="date" class="form-control" name="date"/>
+        <input type="text" class="form-control" name="max" placeholder="max. players"/>
+
+        <select class="form-control" name="location">
+          <option>Bucha</option>
+        </select>
+
         <input type="submit" class="btn btn-secondary btn-sm" value="Save" id="save">
+
       </div>
 
     </form>
