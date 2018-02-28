@@ -6,19 +6,23 @@
 
 {% block main %}
     <!--<script src="/static/newTourn.js"></script>-->
-    <div>
 
-      <form class="form-group d-flex">
+    <form class="form-group" action="{{ url_for('new_tourn') }}" method="post">
+
+      <div class="form-group d-flex">
         <input type="text" class="form-control" placeholder="First Player" id="p1">
         <input type="text" class="form-control" placeholder="Second Player" id="p2">
         <input type="submit" class="btn btn-secondary btn-sm" value="Add" id="add">
-      </form>
-      <ol class="list-group" id="pla"></ol>
+      </div>
 
-      <form class="form-group d-flex" action="{{ url_for('new_tourn') }}" method="post">
+      <ol class="list-group" id="olist"></ol>
+
+      <div class="form-group d-flex">
         <input type="date" class="form-control" name="date"/>
         <input type="submit" class="btn btn-secondary btn-sm" value="Save" id="save">
-      </form>
-    </div>
+      </div>
+
+    </form>
+
 
 {% endblock %}

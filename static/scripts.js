@@ -42,9 +42,9 @@ $(document).ready(function($) {
             });
             $('<input>').attr({
                 type: 'hidden',
-                value: (p1+p2),
-                name: 'bar'
-            }).append('li');
+                value: (p1+","+p2),
+                name: 'pla'
+            }).prependTo(newDouble);
             $('ol').append(newDouble); // To put the new task at the bottom of the list
             $("#p1").val("");
             $("#p2").val("");

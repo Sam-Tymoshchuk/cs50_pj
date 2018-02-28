@@ -129,22 +129,23 @@ def tournaments():
     try:
         tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = id")
 
-        print (tournament[0])
         return render_template("tournaments.html", roster=tournament)
     except:
-        return "there no trasactions in history"
+        return "Exeption on dtb"
 
 @app.route("/new_tourn", methods=["GET", "POST"])
 def new_tourn():
     if request.method == "POST":
         players = 0
+
         try:
             players = request.form.getlist("pla")
+            print (players[0])
         except:
             print (players)
 
-        print (players)
-        return "bad luck"
+
+        return jsonify(players)
     else:
         return render_template("new_tourn.html")
 
