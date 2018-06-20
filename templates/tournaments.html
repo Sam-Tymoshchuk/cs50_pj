@@ -18,12 +18,11 @@
             {% for line in roster %}
                 <tr>
                     <th scope="row">{{ line.id }}</th>
-                    <th>{{ line.date|datetimeformat }}
-                        <button type="button" class="btn btn-primary" style="margin-left: 20px">
-                            <a href="{{ url_for('tournament') }}?t_id={{ line.id }}" style="color: white"> Open
-                        </button>
-                    </th>
-                    <th>{{ line.location }}</th>
+                    <td>
+                        {{ line.date|datetimeformat }}
+                        <a href="{{ url_for('tournament') }}?t_id={{ line.id }}" class="btn btn-primary" role="button"> Open
+                    </td>
+                    <td>{{ line.location }}</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -23,3 +23,8 @@ main img
     display: list-item;
     text-align: left;
 }
+
+p {
+    /*padding: 2px 0 2px 5px;*/
+    margin-bottom: 0;
+}

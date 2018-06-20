@@ -1,34 +1,3 @@
-$("#auth").submit(function(event) {
-
-    // Stop form from submitting normally
-    event.preventDefault();
-
-    let param = {
-        login: $("#login").val(),
-        pass: $("#inputPassword1").val()
-    };
-
-    let posting = $.post("/login", param);
-
-    posting.done(function(data){
-
-        function alarm(status){
-            $("#inputPassword1").addClass("is-invalid");
-            $("#p").append($("<div>")
-            .addClass("invalid-feedback")
-            .html(status));
-        }
-
-        if (data.status === "1"){
-            alarm("Please enter username AND password");
-        }
-        else if (data.status === "2"){
-            alarm("Invalid username or password");
-        }
-
-    });
-});
-
 $(document).ready(function($) {
     $('#add').click(function() {
         if ($('#p1').val() !== '' && $('#p2').val() !== '') {
@@ -37,6 +6,7 @@ $(document).ready(function($) {
             var newDouble = $('<li>')
                 .text(p1 + " / " + p2)
                 .addClass("list-group-item");
+            $("#p1").focus();
             newDouble.on('dblclick', function() {
                 $(this).remove(); // Attach the event handler *before* adding the element
             });

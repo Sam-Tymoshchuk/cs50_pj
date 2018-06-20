@@ -120,7 +120,7 @@ def logout():
 @app.route("/home", methods=["GET", "POST"])
 @login_required
 def home():
-    return render_template("home.html")
+    return redirect(url_for("tournaments"))
 
 @app.route("/tournaments")
 @login_required
@@ -128,6 +128,7 @@ def tournaments():
 
     tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
     return render_template("tournaments.html", roster=tournament)
+
     try:
         tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
         return render_template("tournaments.html", roster=tournament)
@@ -167,9 +168,10 @@ def new_tourn():
 @app.route("/tournament")
 @login_required
 def tournament():
+
     t_id = request.args.get("t_id")
     print (t_id)
-    tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
+    tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
     t_id=t_id)
     return render_template("tournament.html", roster=tournament)
 

@@ -5,21 +5,40 @@
 {% endblock %}
 
 {% block main %}
-    <table class="table table-striped table-bordered">
+    <h3>
+        Date - {{roster[0].date|datetimeformat}}, Location - {{roster[0].location}}, Max players - {{roster[0].max_num}}
+    </h3>
+
+    <table class="table table-bordered table-sm">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Player</th>
+                <th scope="col" style="width:10%">#</th>
+                <th scope="col">Team</th>
             </tr>
         </thead>
         <tbody>
             {% for line in roster %}
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
-                    <th>{{ line.p1 }} {{ line.p2 }}</th>
+                    <td>
+                        <div class="pl-container">
+                            <p>
+                            {{ line.p1 }}
+                            </p>
+                        </div>
+
+                        <p>
+                            {{ line.p2 }}
+                        </p>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    <button type="button" class="btn btn-primary">
+        <a href="{{ url_for('tournament') }}?t_id={{ roster[0].t_id }}" style="color: white">
+            Edit
+    </button>
+
 
 {% endblock %}
