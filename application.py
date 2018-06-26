@@ -150,7 +150,7 @@ def new_tourn():
 
         try:
             t_id = db.execute("INSERT INTO tournaments (date, max_num, location_id, t_type_id) VALUES (:date, :max_num, 1, 1)",
-            date=date, max_num=max_players)
+                            date=date, max_num=max_players)
         except:
             print ("Error 1")
 
@@ -161,26 +161,34 @@ def new_tourn():
         except:
             print ("error 2")
 
-        return render_template("new_tourn.html")
+        return redirect(url_for("tournament",t_id=t_id))
     else:
-        return render_template("new_tourn.html")
+        t_id = request.args.get("t_id")
+
+        tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
+                            t_id=t_id)
+        return render_template("new_tourn.html", roster=tournament)
 
 @app.route("/tournament")
 @login_required
-def tournament():
+def tournament(t_id=None):
 
-    t_id = request.args.get("t_id")
+    if t_id is None:
+        t_id = request.args.get("t_id")
+
     print (t_id)
+
     tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
-    t_id=t_id)
+                            t_id=t_id)
+
     return render_template("tournament.html", roster=tournament)
 
-    try:
-        tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
-        t_id=t_id)
-        return render_template("tournament.html", roster=tournament)
-    except:
-        return redirect("/tournaments")
+    # try:
+    #     tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
+    #     t_id=t_id)
+    #     return render_template("tournament.html", roster=tournament)
+    # except:
+    #     return redirect("/tournaments")
 
 @app.route("/games")
 def games():

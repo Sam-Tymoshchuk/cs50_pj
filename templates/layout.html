@@ -9,7 +9,9 @@
         <meta content="initial-scale=1, width=device-width" name="viewport"/>
 
         <!-- documentation at http://getbootstrap.com/, alternative themes at https://www.bootstrapcdn.com/bootswatch/ -->
-        <link href="https://maxcdn.bootstrapcdn.com/bootswatch/4.0.0-beta.3/lumen/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/lumen/bootstrap.min.css">-->
 
         <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"/>
 
@@ -19,23 +21,38 @@
 
         <!-- app's own JavaScript -->
         <script src="/static/scripts.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
         <title>TGP for Tennis</title>
 
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="{{ url_for('index') }}">TGP</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="true" aria-label="Toggle navigation" style="">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse show" id="navbarColor01" style="">
+
+            <div class="navbar-collapse collapse" id="navbarNav">
                 {% if session.user_id %}
+                    <!--<div class="navbar-nav">-->
+                    <!--    <a class="nav-item nav-link active" href="{{ url_for('tournaments') }}">-->
+                    <!--        List of Tournament<span class="sr-only">(current)</span>-->
+                    <!--    </a>-->
+                    <!--    <a class="nav-item nav-link" href="{{ url_for('new_tourn') }}">Add new Tournament</a>-->
+                    <!--    <a class="nav-item nav-link" href="{{ url_for('logout') }}">Log Out</a>-->
+
+                    <!--</div>-->
+
+
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('tournaments') }}">List of Tournament<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{{ url_for('tournaments') }}">
+                                List of Tournament<span class="sr-only">(current)</span>
+                            </a>
                         </li>
                          <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('new_tourn') }}">Add new Tournament</a>
@@ -57,6 +74,11 @@
                                 <li><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
                     </ul>
                 {% else %}
+                    <!--<div class="navbar-nav">-->
+                    <!--    <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>-->
+                    <!--    <a class="nav-item nav-link" href="{{ url_for('login') }}">Log In</a>-->
+                    <!--</div>-->
+
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('register') }}">Register</a>
@@ -69,13 +91,13 @@
             </div>
         </nav>
 
-            {% if get_flashed_messages() %}
-                <header>
-                    <div class="alert alert-info" role="alert">
-                        {{ get_flashed_messages() | join(" ") }}
-                    </div>
-                </header>
-            {% endif %}
+            <!--{% if get_flashed_messages() %}-->
+            <!--    <header>-->
+            <!--        <div class="alert alert-info" role="alert">-->
+            <!--            {{ get_flashed_messages() | join(" ") }}-->
+            <!--        </div>-->
+            <!--    </header>-->
+            <!--{% endif %}-->
 
             <main class="container p-5">
                 {% block main %}{% endblock %}

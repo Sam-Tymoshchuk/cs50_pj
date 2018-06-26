@@ -35,10 +35,9 @@
             {% endfor %}
         </tbody>
     </table>
-    <button type="button" class="btn btn-primary">
-        <a href="{{ url_for('tournament') }}?t_id={{ roster[0].t_id }}" style="color: white">
-            Edit
-    </button>
 
+    <a href="{{ url_for('new_tourn') }}?t_id={{ roster[0].t_id }}" class="btn btn-primary" role="button">
+        Edit
+    </a>
 
 {% endblock %}

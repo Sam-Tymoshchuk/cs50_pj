@@ -4,12 +4,10 @@ $(document).ready(function($) {
             var p1 = $("#p1").val();
             var p2 = $("#p2").val();
             var newDouble = $('<li>')
-                .text(p1 + " / " + p2)
+                .text(p1 + "\n" + p2)
                 .addClass("list-group-item");
             $("#p1").focus();
-            newDouble.on('dblclick', function() {
-                $(this).remove(); // Attach the event handler *before* adding the element
-            });
+
             $('<input>').attr({
                 type: 'hidden',
                 value: (p1+","+p2),
@@ -25,5 +23,10 @@ $(document).ready(function($) {
             return false;
         }
     });
+
+    $('li').on('dblclick', function() {
+                $(this).remove(); // Attach the event handler *before* adding the element
+            });
+
     $("ol").sortable(); // can sort the list, got it from Jquery UI
 });

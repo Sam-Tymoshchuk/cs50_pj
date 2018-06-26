@@ -17,7 +17,11 @@
         <input type="submit" class="btn btn-secondary btn-sm" value="Add" id="add">
       </div>
 
-      <ol class="list-group" id="olist"></ol>
+      <ol class="list-group" id="olist">
+        {% for line in roster %}
+          <li class="list-group-item"><input type="hidden" value="{{ line.p1 }}, {{ line.p2 }}" name="pla">{{ line.p1 }} {{ line.p2 }}</li>
+        {% endfor %}
+      </ol>
 
       <div class="form-group d-flex">
         <input type="date" class="form-control" name="date" required/>
