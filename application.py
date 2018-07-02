@@ -1,9 +1,10 @@
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, url_for, abort
 from flask_session import Session
 from passlib.apps import custom_app_context as pwd_context
 from tempfile import mkdtemp
 from datetime import datetime
+from werkzeug.exceptions import default_exceptions, HTTPException
 
 from helpers import *
 
@@ -54,18 +55,18 @@ def register():
     if request.method == "POST":
 
         if not request.form.get("username"):
-            return print("Missing username!")
+            abort(400, "Missing username!")
 
         # ensure password was provided
         elif not request.form.get("password"):
-            return print("Must provide password")
+            abort(400, "Must provide password")
 
         # ensure password was confirmed
         elif not request.form.get("c_password"):
-            return print("Must confirm password")
+            abort(400, "Must confirm password")
 
         elif request.form.get("password") != request.form.get("c_password"):
-            return print("Password does not match confirmation")
+            abort(400, "Password does not match confirmation")
 
         hash_pwd = pwd_context.hash(request.form.get("password"))
 
@@ -73,7 +74,7 @@ def register():
                             username=request.form.get("username"), hash_pwd=hash_pwd)
 
         if not result:
-            return print("The username has been already taken, please try with another one")
+            abort(400, "The username has been already taken, please try with another one")
 
         # remember login the user has logged in
         session["user_id"] = result
@@ -96,12 +97,12 @@ def login():
         password = request.form["inputPassword1"]
 
         if not login or not password:
-            return jsonify(status="1")
+            return abort(400, "Please provide username and password")
 
         rows = db.execute("SELECT * FROM users WHERE login = :username", username=login)
 
         if len(rows) != 1 or not pwd_context.verify(password, rows[0]["hash"]):
-            return jsonify(status="2")
+            abort(400, "Invalid username or password")
 
         session["user_id"] = rows[0]["id"]
 
@@ -158,6 +159,7 @@ def new_tourn():
 
     else:
         t_id = request.args.get("t_id")
+
         if t_id is not None:
             tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
                                     t_id=t_id)
@@ -166,6 +168,7 @@ def new_tourn():
                                         t_id=t_id)
         else:
             tournament = None
+
         return render_template("new_tourn.html", roster=tournament)
 
 
@@ -178,9 +181,11 @@ def tournament(t_id=None):
 
     tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
                             t_id=t_id)
+    # for cases when there are no players in a tournament
     if not tournament:
         tournament = db.execute("SELECT id as t_id, date, max_num, location FROM tournaments JOIN locations ON tournaments.location_id = locations.l_id WHERE id = :t_id",
                                 t_id=t_id)
+        tournament[0]["p1"] = "There no players in this tournament"
     return render_template("tournament.html", roster=tournament)
 
 
@@ -206,3 +211,13 @@ def new_player():
 def players():
     # YET TO DO
     return ""
+
+
+@app.errorhandler(HTTPException)
+def errorhandler(error):
+    """Handle errors"""
+    return render_template("error.html", error=error), error.code
+
+# https://github.com/pallets/flask/pull/2314
+for code in default_exceptions:
+    app.errorhandler(code)(errorhandler)

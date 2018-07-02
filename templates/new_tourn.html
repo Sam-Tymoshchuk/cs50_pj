@@ -9,7 +9,11 @@
 
     <form class="form-group" action="{{ url_for('new_tourn') }}" method="post">
 
-      <h2>Add a New Tournament</h1>
+      {% if roster is not none %}
+        <h2>Date - {{roster[0].date|datetimeformat}}, Location - {{roster[0].location}}, Max players - {{roster[0].max_num}}</h2>
+      {% else %}
+        <h2>Add a New Tournament</h1>
+      {% endif %}
 
       <div class="form-group d-flex">
         <input type="text" class="form-control" placeholder="First Player" id="p1">
@@ -18,14 +22,16 @@
       </div>
 
       <ol class="list-group" id="olist">
-        {% for line in roster %}
-          <li class="list-group-item"><input type="hidden" value="{{ line.p1 }}, {{ line.p2 }}" name="pla">{{ line.p1 }} {{ line.p2 }}</li>
-        {% endfor %}
+        {% if roster is not none %}
+          {% for line in roster %}
+            <li class="list-group-item"><input type="hidden" value="{{ line.p1 }}, {{ line.p2 }}" name="pla">{{ line.p1 }} {{ line.p2 }}</li>
+          {% endfor %}
+        {% endif %}
       </ol>
 
       <div class="form-group d-flex">
-        <input type="date" class="form-control" name="date" required/>
-        <input type="text" class="form-control" name="max" placeholder="max. players" required/>
+        <input type="date" class="form-control" name="date" required {% if roster[0] is defined %} value="{{ roster[0].date }}"{% endif %}/>
+        <input type="text" class="form-control" name="max" placeholder="max. players" required {% if roster[0] is defined %} value="{{ roster[0].max_num }}"{% endif %}/>
 
       </div>
 
