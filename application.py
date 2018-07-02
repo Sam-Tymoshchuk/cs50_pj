@@ -28,16 +28,20 @@ Session(app)
 # configure CS50 Library to use SQLite database
 db = SQL("sqlite:///TGP_data.db")
 
+
 @app.template_filter("datetimeformat")
 def datetimeformat(value, format="%Y-%m-%d"):
     date = datetime.strptime(value, format)
     return date.strftime("%d.%m.%Y")
 
+# Decorator for Jinja tamplates to convert date format to dd-mm-yyyy
 app.jinja_env.filters["datetimeformat"] = datetimeformat
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -80,6 +84,7 @@ def register():
     else:
         return render_template("register.html")
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in."""
@@ -90,12 +95,10 @@ def login():
         login = request.form["login"]
         password = request.form["inputPassword1"]
 
-        print (login)
-
         if not login or not password:
             return jsonify(status="1")
 
-        rows =  db.execute("SELECT * FROM users WHERE login = :username", username=login)
+        rows = db.execute("SELECT * FROM users WHERE login = :username", username=login)
 
         if len(rows) != 1 or not pwd_context.verify(password, rows[0]["hash"]):
             return jsonify(status="2")
@@ -107,6 +110,7 @@ def login():
     else:
         return render_template("login.html")
 
+
 @app.route("/logout")
 def logout():
     """Log user out."""
@@ -117,23 +121,23 @@ def logout():
     # redirect user to login form
     return redirect(url_for("index"))
 
+
 @app.route("/home", methods=["GET", "POST"])
 @login_required
 def home():
     return redirect(url_for("tournaments"))
 
+
 @app.route("/tournaments")
 @login_required
 def tournaments():
-
-    tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
-    return render_template("tournaments.html", roster=tournament)
 
     try:
         tournament = db.execute("SELECT * FROM tournaments JOIN locations on tournaments.location_id = l_id")
         return render_template("tournaments.html", roster=tournament)
     except:
-        return "Exeption on dtb 1"
+        return "Exeption on dtb 1"  # add an error handler here
+
 
 @app.route("/new_tourn", methods=["GET", "POST"])
 @login_required
@@ -145,29 +149,25 @@ def new_tourn():
         date = request.form["date"]
         max_players = request.form["max"]
         location = request.form["location"]
+        tourn_id = request.form.get("t_id")
 
-        print (players, date, max_players, location)
+        if not tourn_id:
+            return add_tournament(max_players, date, players)
+        else:
+            return update_tournament(tourn_id, max_players, date, players)
 
-        try:
-            t_id = db.execute("INSERT INTO tournaments (date, max_num, location_id, t_type_id) VALUES (:date, :max_num, 1, 1)",
-                            date=date, max_num=max_players)
-        except:
-            print ("Error 1")
-
-        try:
-            for p in players:
-                db.execute("INSERT INTO participants (t_id, p1, p2) VALUES (:t_id, :p1, :p2)",
-                t_id=t_id, p1=p[0], p2=p[1])
-        except:
-            print ("error 2")
-
-        return redirect(url_for("tournament",t_id=t_id))
     else:
         t_id = request.args.get("t_id")
-
-        tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
-                            t_id=t_id)
+        if t_id is not None:
+            tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
+                                    t_id=t_id)
+            if not tournament:
+                tournament = db.execute("SELECT id as t_id, date, max_num, location FROM tournaments JOIN locations ON tournaments.location_id = locations.l_id WHERE id = :t_id",
+                                        t_id=t_id)
+        else:
+            tournament = None
         return render_template("new_tourn.html", roster=tournament)
+
 
 @app.route("/tournament")
 @login_required
@@ -176,34 +176,31 @@ def tournament(t_id=None):
     if t_id is None:
         t_id = request.args.get("t_id")
 
-    print (t_id)
-
     tournament = db.execute("SELECT t_id, date, p1, p2, max_num, location FROM participants JOIN tournaments ON participants.t_id = id JOIN locations ON tournaments.location_id = locations.l_id WHERE t_id = :t_id",
                             t_id=t_id)
-
+    if not tournament:
+        tournament = db.execute("SELECT id as t_id, date, max_num, location FROM tournaments JOIN locations ON tournaments.location_id = locations.l_id WHERE id = :t_id",
+                                t_id=t_id)
     return render_template("tournament.html", roster=tournament)
 
-    # try:
-    #     tournament = db.execute("SELECT t_id, p1, p2 FROM participants JOIN tournaments ON participants.t_id = id WHERE t_id = :t_id",
-    #     t_id=t_id)
-    #     return render_template("tournament.html", roster=tournament)
-    # except:
-    #     return redirect("/tournaments")
 
 @app.route("/games")
 def games():
     # YET TO DO
     return ""
 
+
 @app.route("/new_game")
 def new_game():
     # YET TO DO
     return ""
 
+
 @app.route("/new_player")
 def new_player():
     # YET TO DO
     return ""
+
 
 @app.route("/players")
 def players():

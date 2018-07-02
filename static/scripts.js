@@ -23,8 +23,7 @@ $(document).ready(function($) {
             return false;
         }
     });
-
-    $('li').on('dblclick', function() {
+    $("li").on('dblclick', function() {
                 $(this).remove(); // Attach the event handler *before* adding the element
             });
 
